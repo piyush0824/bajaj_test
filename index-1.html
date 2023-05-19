@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Developer Directory</title>
+    <style>
+        /* Custom CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #baf2ff;
+            padding: 20px;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            width: 200px;
+        }
+
+        .filter-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4caf50;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .developer-card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 10px;
+            background-color: #fff;
+        }
+
+        .developer-card h2 {
+            margin-top: 0;
+        }
+
+        .developer-card p {
+            margin-bottom: 10px;
+        }
+
+        .no-results {
+            text-align: center;
+            font-weight: bold;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Developer Information</h1>
+
+        <form class="search-form">
+            <input type="text" class="search-input" id="name-input" placeholder="Search by name">
+            <input type="text" class="search-input" id="designation-input" placeholder="Filter by designation/skills">
+            <button type="submit" class="filter-button">Filter</button>
+        </form>
+
+        <div id="developers-container"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            loadDevelopers();
+
+            // Submit form on filter button click
+            $('#filter-form').on('submit', function(event) {
+                event.preventDefault();
+                loadDevelopers();
+            });
+        });
+
+        function loadDevelopers() {
+            var name = $('#name-input').val();
+            var designation = $('#designation-input').val();
+
+            $.ajax({
+                url: '/developers',
+                data: {
+                    name: name,
+                    designation: designation
+                },
+                success: function(data) {
+                    renderDevelopers(data);
+                },
+                error: function() {
+                    alert('Error occurred while loading developers.');
+                }
+            });
+        }
+
+        function renderDevelopers(developers) {
+            var developersContainer = $('#developers-container');
+            developersContainer.empty();
+
+            if (developers.length === 0) {
+                developersContainer.append('<p>No developers found.</p>');
+                return;
+            }
+
+            developers.forEach(function(developer) {
+                var developerCard = $('<div>').addClass('developer-card');
+                developerCard.append('<h2>' + developer.name + '</h2>');
+                developerCard.append('<p>Designation: ' + developer.designation + '</p>');
+                developerCard.append('<p>Email: ' + developer.email + '</p>');
+                developerCard.append('<p>GitHub: ' + developer.github + '</p>');
+                developerCard.append('<p>LinkedIn: ' + developer.linkedin + '</p>');
+                developerCard.append('<p>Website: ' + developer.website + '</p>');
+
+                developersContainer.append(developerCard);
+            });
+        }
+    </script>
+</body>
+</html>
